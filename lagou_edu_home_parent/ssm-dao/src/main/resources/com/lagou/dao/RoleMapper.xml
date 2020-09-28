@@ -38,5 +38,35 @@
         delete from roles where id = #{roleid}
     </delete>
 
+    <!--资源信息 -->
+    <select id="findResourceAndResourceCategoryByRoleId" parameterType="Integer" resultMap="ResourceCategoryMap">
+        SELECT
+	    rc.id,rc.name,re.id AS rid,re.name,re.url,re.category_id,re.description
+	    FROM
+	        roles r INNER JOIN role_resource_relation rrr ON r.id = rrr.role_id
+	        INNER JOIN resource re ON rrr.resource_id = re.id
+	        INNER JOIN resource_category rc ON re.`category_id` = rc.`id`
+	        WHERE r.id = #{id};
+    </select>
 
+    <resultMap id="ResourceCategoryMap" type="com.lagou.domain.ResourceCategory">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <collection property="resourceList" ofType="com.lagou.domain.Resource">
+            <id column="rid" property="id"></id>
+            <result column="ren" property="name"></result>
+            <result column="url" property="url"></result>
+            <result column="category_id" property="categoryId"></result>
+            <result column="description" property="description"></result>
+        </collection>
+    </resultMap>
+
+    <!--删除角色与资源的关联关系 -->
+    <delete id="deleteRoleResourceRelation" parameterType="Integer">
+        DELETE FROM role_resource_relation WHERE role_id = #{roleId};
+    </delete>
+
+    <insert id="saveRoleResourceRelation" parameterType="com.lagou.domain.RoleResourceRelation">
+        INSERT INTO role_resource_relation VALUES(NULL,#{resourceId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy});
+    </insert>
 </mapper>

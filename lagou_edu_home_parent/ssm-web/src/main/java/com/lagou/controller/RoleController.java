@@ -1,9 +1,6 @@
 package com.lagou.controller;
 
-import com.lagou.domain.Menu;
-import com.lagou.domain.ResponseResult;
-import com.lagou.domain.Role;
-import com.lagou.domain.RoleMenuVo;
+import com.lagou.domain.*;
 import com.lagou.service.MenuService;
 import com.lagou.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +96,28 @@ public class RoleController {
 
     }
 
+    @RequestMapping("/findResourceListByRoleId")
+    public ResponseResult findResourceListByRoleId(Integer roleId){
+        ResourceCategory rc = roleService.findResourceAndResourceCategoryByRoleId(roleId);
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("id",rc.getId());
+        map.put("name",rc.getName());
+        map.put("sort",rc.getSort());
+        map.put("createdTime",rc.getCreatedTime());
+        map.put("updatedTime",rc.getUpdatedTime());
+        map.put("createdBy",rc.getCreatedBy());
+        map.put("updatedBy",rc.getUpdatedBy());
+        map.put("resourceList",rc.getResourceList());
+        return new ResponseResult(true,200,"响应成功",map);
+    }
+
+    @RequestMapping("/roleContextResource")
+    public ResponseResult roleContextResource(@RequestBody RoleResourceVO roleResourceVO){
+        System.out.println(roleResourceVO.getRoleId());
+        System.out.println(roleResourceVO.getResourceIdList());
+        roleService.roleContextResource(roleResourceVO);
+        return new ResponseResult(true,200,"角色分配资源成功",null);
+    }
 
 
 
